@@ -32,11 +32,12 @@ pipeline {
         stage('Maven Build') {
             agent { label 'maven-agent' }
             steps {
-		dir('java-app') {
-                sh '''
-                mvn --version
-                mvn clean test
-                '''
+                dir('java-app') {
+                    sh '''
+                    mvn --version
+                    mvn clean test
+                    '''
+                }
             }
         }
     }
