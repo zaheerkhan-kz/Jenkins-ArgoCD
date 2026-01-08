@@ -26,14 +26,19 @@ pipeline {
         stage('Maven Build') {
             agent { label 'maven-agent' }
             steps {
-                checkout scm      // ✅ checkout on the Maven agent
-                dir('java-app') {
-                    sh '''
-                    mvn --version
-                    mvn clean test
-                    '''
-                }
-            }
+                
+		checkout([$class: 'GitSCM',
+                  branches: [[name: '*/main']],
+                  doGenerateSubmoduleConfigurations: false,
+                  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '.']],
+                  userRemoteConfigs: [[url: 'git@github.com:https:zaheerkhan-kz/Jenkins-ArgoCD.git']]])
+        
+          dir('java-app') {
+              sh 'ls -la'
+              sh 'cat pom.xml'
+              sh 'mvn --version'
+              sh 'mvn clean test'
+          }
         }
     }
 
