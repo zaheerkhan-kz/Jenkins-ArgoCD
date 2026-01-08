@@ -7,16 +7,10 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            agent any
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Python Tests') {
             agent any
             steps {
+                checkout scm
                 sh '''
                 python3 --version
                 python3 -m venv venv
@@ -32,7 +26,7 @@ pipeline {
         stage('Maven Build') {
             agent { label 'maven-agent' }
             steps {
-                checkout scm   // 👈 checkout on Maven agent
+                checkout scm      // ✅ checkout on the Maven agent
                 dir('java-app') {
                     sh '''
                     mvn --version
