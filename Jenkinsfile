@@ -1,9 +1,9 @@
 pipeline {
-    agent any
-
-    environment {
-        PYTHON_VERSION = "3.9"
-        DJANGO_SETTINGS_MODULE = "mysite"
+    agent {
+        docker {
+            image 'python:3.9'
+            args '-u root'
+        }
     }
 
     stages {
