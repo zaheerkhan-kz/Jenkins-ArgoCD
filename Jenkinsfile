@@ -6,15 +6,17 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Install Python & Dependencies') {
+        stage('Setup Python') {
             steps {
                 sh '''
+                python3 --version
                 python3 -m venv venv
                 . venv/bin/activate
                 pip install --upgrade pip
@@ -23,7 +25,7 @@ pipeline {
             }
         }
 
-        stage('Run Django Checks') {
+        stage('Django Check') {
             steps {
                 sh '''
                 . venv/bin/activate
@@ -40,40 +42,23 @@ pipeline {
                 '''
             }
         }
-    }
-}
 
-        stage('Build Docker Image') {
+        stage('Deploy to Kubernetes') {
             steps {
                 sh '''
-                docker build -t mydjangoapp:${BUILD_NUMBER} .
+                kubectl apply -f k8s/
                 '''
-            }
-        }
-
-        stage('Tag & Push Image') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-creds',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh '''
-                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                    docker tag mydjangoapp:${BUILD_NUMBER} $DOCKER_USER/mydjangoapp:${BUILD_NUMBER}
-                    docker push $DOCKER_USER/mydjangoapp:${BUILD_NUMBER}
-                    '''
-                }
             }
         }
     }
 
     post {
         success {
-            echo "✅ Tests passed, image built and pushed"
+            echo "✅ Deployment successful"
         }
         failure {
-            echo "❌ Tests failed"
+            echo "❌ Pipeline failed"
         }
     }
 }
+
