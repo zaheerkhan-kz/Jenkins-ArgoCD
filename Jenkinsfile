@@ -26,19 +26,22 @@ pipeline {
         stage('Maven Build') {
             agent { label 'maven-agent' }
             steps {
-                
-		checkout([$class: 'GitSCM',
-                  branches: [[name: '*/main']],
-                  doGenerateSubmoduleConfigurations: false,
-                  extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '.']],
-                  userRemoteConfigs: [[url: 'git@github.com:https:zaheerkhan-kz/Jenkins-ArgoCD.git']]])
-        
-          dir('java-app') {
-              sh 'ls -la'
-              sh 'cat pom.xml'
-              sh 'mvn --version'
-              sh 'mvn clean test'
-          }
+
+                checkout([$class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    doGenerateSubmoduleConfigurations: false,
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/zaheerkhan-kz/Jenkins-ArgoCD.git'
+                    ]]
+                ])
+
+                dir('java-app') {
+                    sh 'ls -la'
+                    sh 'cat pom.xml'
+                    sh 'mvn --version'
+                    sh 'mvn clean test'
+                }
+            }
         }
     }
 
