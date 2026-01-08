@@ -1,5 +1,31 @@
 pipeline {
-    agent any
+    agent nonei
+
+    stages {
+
+        stage('Python Tests') {
+            agent any
+            steps {
+                sh '''
+                python3 -m venv venv
+                . venv/bin/activate
+                pip install -r requirements.txt
+                python manage.py test
+                '''
+            }
+        }
+
+        stage('Maven Build') {
+            agent { label 'maven-agent' }
+            steps {
+                sh '''
+                mvn clean test
+                '''
+            }
+        }
+    }
+}
+
 
     environment {
         DJANGO_SETTINGS_MODULE = 'mysite'
