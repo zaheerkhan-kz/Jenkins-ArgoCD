@@ -32,6 +32,7 @@ pipeline {
         stage('Maven Build') {
             agent { label 'maven-agent' }
             steps {
+                checkout scm   // 👈 checkout on Maven agent
                 dir('java-app') {
                     sh '''
                     mvn --version
