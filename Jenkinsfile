@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DJANGO_SETTINGS_MODULE = 'myproject.settings'
+        DJANGO_SETTINGS_MODULE = 'mysite'
     }
 
     stages {
