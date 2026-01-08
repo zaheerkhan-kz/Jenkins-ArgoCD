@@ -1,24 +1,20 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.9'
-            args '-u root'
-        }
+    agent any
+
+    environment {
+        DJANGO_SETTINGS_MODULE = 'myproject.settings'
     }
 
     stages {
-
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/zaheerkhan-kz/Jenkins-ArgoCD.git'
+                checkout scm
             }
         }
 
-        stage('Set up Python') {
+        stage('Install Python & Dependencies') {
             steps {
                 sh '''
-                python3 --version
                 python3 -m venv venv
                 . venv/bin/activate
                 pip install --upgrade pip
@@ -44,6 +40,8 @@ pipeline {
                 '''
             }
         }
+    }
+}
 
         stage('Build Docker Image') {
             steps {
